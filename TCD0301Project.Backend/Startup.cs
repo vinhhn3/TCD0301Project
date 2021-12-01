@@ -1,17 +1,10 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TCD0301Project.Backend.Data;
 using TCD0301Project.Backend.Mapping;
 using TCD0301Project.Backend.Repositories;
@@ -43,6 +36,16 @@ namespace TCD0301Project.Backend
       // Register Automapper
       services.AddAutoMapper(typeof(ApiMapping));
 
+      // Configure Swagger services
+      services.AddSwaggerGen(options =>
+      {
+        options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo()
+        {
+          Title = "TCD0301 Api",
+          Version = "v1"
+        });
+      });
+
       services.AddControllers();
     }
 
@@ -55,6 +58,13 @@ namespace TCD0301Project.Backend
       }
 
       app.UseHttpsRedirection();
+
+      // Use Swagger
+      app.UseSwagger();
+      app.UseSwaggerUI(options =>
+      {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "TCD0301 Api");
+      });
 
       app.UseRouting();
 
