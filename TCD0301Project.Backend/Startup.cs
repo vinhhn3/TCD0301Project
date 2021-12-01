@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TCD0301Project.Backend.Data;
+using TCD0301Project.Backend.Mapping;
 using TCD0301Project.Backend.Repositories;
 using TCD0301Project.Backend.Repositories.Interfaces;
 
@@ -37,6 +39,9 @@ namespace TCD0301Project.Backend
 
       // Register Repositories
       services.AddScoped<IParkRepository, ParkRepository>();
+
+      // Register Automapper
+      services.AddAutoMapper(typeof(ApiMapping));
 
       services.AddControllers();
     }

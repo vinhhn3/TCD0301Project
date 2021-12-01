@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using TCD0301Project.Backend.Data;
+using TCD0301Project.Backend.Dtos;
 using TCD0301Project.Backend.Models;
 using TCD0301Project.Backend.Repositories.Interfaces;
 
@@ -22,7 +24,17 @@ namespace TCD0301Project.Backend.Controllers
     public IActionResult GetParks()
     {
       var parks = _parkRepos.GetParks();
-      return Ok(parks);
+      var parksDto = new List<ParkDto>();
+      foreach (var park in parks)
+      {
+        parksDto.Add(new ParkDto
+        {
+          Name = park.Name,
+          State = park.State,
+          Established = park.Established
+        });
+      }
+      return Ok(parksDto);
     }
 
     [HttpGet("{id:int}", Name = "GetPark")]
@@ -31,6 +43,12 @@ namespace TCD0301Project.Backend.Controllers
       var park = _parkRepos.GetPark(id);
       if (park == null) return NotFound();
 
+      var parkDto = new ParkDto
+      {
+        Established = park.Established,
+        State = park.State,
+        Name = park.Name
+      };
       return Ok(park);
     }
 
