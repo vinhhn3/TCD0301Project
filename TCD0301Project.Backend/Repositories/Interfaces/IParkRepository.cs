@@ -12,6 +12,6 @@ namespace TCD0301Project.Backend.Repositories.Interfaces
     bool ParkExists(string name);
     bool CreatePark(Park park);
     bool UpdatePark(Park park);
-    bool DeletePark(Park park);
+    bool DeletePark(int id);
   }
 }

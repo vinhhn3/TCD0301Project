@@ -20,9 +20,12 @@ namespace TCD0301Project.Backend.Repositories
       return Save();
     }
 
-    public bool DeletePark(Park park)
+    public bool DeletePark(int id)
     {
-      throw new System.NotImplementedException();
+      var park = GetPark(id);
+      if (park == null) return false;
+      _context.Parks.Remove(park);
+      return Save();
     }
 
     public Park GetPark(int id)
