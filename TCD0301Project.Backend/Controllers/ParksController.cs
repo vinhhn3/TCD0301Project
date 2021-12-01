@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +16,11 @@ namespace TCD0301Project.Backend.Controllers
   public class ParksController : ControllerBase
   {
     private IParkRepository _parkRepos;
-    public ParksController(IParkRepository parkRepos)
+    private readonly IMapper _mapper;
+    public ParksController(IParkRepository parkRepos, IMapper mapper)
     {
       _parkRepos = parkRepos;
+      _mapper = mapper;
     }
 
     [HttpGet]
@@ -27,12 +30,7 @@ namespace TCD0301Project.Backend.Controllers
       var parksDto = new List<ParkDto>();
       foreach (var park in parks)
       {
-        parksDto.Add(new ParkDto
-        {
-          Name = park.Name,
-          State = park.State,
-          Established = park.Established
-        });
+        parksDto.Add(_mapper.Map<ParkDto>(park));
       }
       return Ok(parksDto);
     }
@@ -43,23 +41,27 @@ namespace TCD0301Project.Backend.Controllers
       var park = _parkRepos.GetPark(id);
       if (park == null) return NotFound();
 
-      var parkDto = new ParkDto
-      {
-        Established = park.Established,
-        State = park.State,
-        Name = park.Name
-      };
-      return Ok(park);
+      //var parkDto = new ParkDto
+      //{
+      //  Established = park.Established,
+      //  State = park.State,
+      //  Name = park.Name
+      //};
+      var parkDto = _mapper.Map<ParkDto>(park);
+
+      return Ok(parkDto);
     }
 
     [HttpPost]
-    public IActionResult CreatePark([FromBody] Park park)
+    public IActionResult CreatePark([FromBody] ParkDto parkDto)
     {
-      if (park == null) return BadRequest("The body is null ...");
-      if (_parkRepos.ParkExists(park.Name))
+      if (parkDto == null) return BadRequest("The body is null ...");
+      if (_parkRepos.ParkExists(parkDto.Name))
       {
         return BadRequest("The name already existed ...");
       }
+
+      var park = _mapper.Map<Park>(parkDto);
 
       if (!_parkRepos.CreatePark(park))
       {
@@ -70,9 +72,11 @@ namespace TCD0301Project.Backend.Controllers
     }
 
     [HttpPatch("{id:int}", Name = "UpdatePark")]
-    public IActionResult UpdatePark(int id, [FromBody] Park park)
+    public IActionResult UpdatePark(int id, [FromBody] ParkDto parkDto)
     {
-      if (park == null || park.Id != id) return BadRequest("The body and the paramId don't match");
+      if (parkDto == null || parkDto.Id != id) return BadRequest("The body and the paramId don't match");
+
+      var park = _mapper.Map<Park>(parkDto);
 
       if (!_parkRepos.UpdatePark(park))
       {
