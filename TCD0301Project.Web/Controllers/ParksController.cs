@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -67,6 +68,18 @@ namespace TCD0301Project.Web.Controllers
         );
 
       var response = await client.PostAsync(ServiceUrl.Park, content);
+
+      if (!response.IsSuccessStatusCode) return BadRequest("Something went wrong ...");
+
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var client = _clientFactory.CreateClient("ParkService");
+
+      var response = await client.DeleteAsync($"{ServiceUrl.Park}/{id}");
 
       if (!response.IsSuccessStatusCode) return BadRequest("Something went wrong ...");
 
