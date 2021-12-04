@@ -85,5 +85,41 @@ namespace TCD0301Project.Web.Controllers
 
       return RedirectToAction("Index");
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+      var client = _clientFactory.CreateClient("ParkService");
+      var response = await client.GetAsync($"{ServiceUrl.Park}/{id}");
+
+      if (!response.IsSuccessStatusCode)
+        return BadRequest("Something went wrong ...");
+
+      var park = JsonConvert.DeserializeObject<ParkViewModel>(
+        response.Content.ReadAsStringAsync().Result);
+
+      return View(park);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Edit(ParkViewModel model)
+    {
+      if (!ModelState.IsValid)
+      {
+        return View(model);
+      }
+
+      var client = _clientFactory.CreateClient("ParkService");
+      HttpContent content = new StringContent(JsonConvert.SerializeObject(model),
+        Encoding.UTF8, "application/json"
+        );
+
+      var response = await client
+        .PatchAsync($"{ServiceUrl.Park}/{model.Id}", content);
+
+      if (!response.IsSuccessStatusCode) return BadRequest("Something went wrong...");
+
+      return RedirectToAction("Index");
+    }
   }
 }
