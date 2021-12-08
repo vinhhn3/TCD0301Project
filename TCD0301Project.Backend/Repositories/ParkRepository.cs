@@ -57,7 +57,12 @@ namespace TCD0301Project.Backend.Repositories
 
     public bool UpdatePark(Park park)
     {
-      _context.Parks.Update(park);
+      var parkInDb = _context.Parks.SingleOrDefault(t => t.Id == park.Id);
+      if (parkInDb == null) return false;
+      parkInDb.Name = park.Name;
+      parkInDb.State = park.State;
+      parkInDb.CreatedAt = park.CreatedAt;
+      parkInDb.Established = park.Established;
       return Save();
     }
 

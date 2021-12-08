@@ -137,5 +137,80 @@ namespace TCD0301.Test
       Assert.AreEqual(expectedResult, actualResult);
     }
 
+    /// <summary>
+    /// Seventh Test Case: Add new Park successfully, return true
+    /// </summary>
+    [Test]
+    public void CreatePark_Succesfully_ReturnsTrue()
+    {
+      // Arrange
+      var newPark = new Park
+      {
+        Name = "Name 3",
+        State = "State 3",
+        CreatedAt = DateTime.Now,
+        Established = DateTime.Now
+      };
+      // Act
+      var result = _parkRepository.CreatePark(newPark);
+      // Assert
+      var parks = _parkRepository.GetParks();
+      Assert.AreEqual(3, parks.Count);
+
+      var isExist = _parkRepository.ParkExists(newPark.Name);
+      Assert.IsTrue(isExist);
+    }
+
+    /// <summary>
+    /// Eighth Test Case: If update existed item successfully, returns true
+    /// </summary>
+    [Test]
+    public void UpdatePark_Successfully_ReturnsTrue()
+    {
+      // Arrange
+      var parkToUpdated = new Park
+      {
+        Id = 1,
+        Name = "Name 1 updated ...",
+        State = "State 1 updated ..."
+      };
+      // Act
+      var result = _parkRepository.UpdatePark(parkToUpdated);
+      // Assert
+      Assert.IsTrue(result);
+    }
+
+    /// <summary>
+    /// 9th Test Case: If update not existed item successfully, returns false
+    /// </summary>
+    [Test]
+    public void UpdatePark_Failed_ReturnsFalse()
+    {
+      // Arrange
+      var parkToUpdated = new Park
+      {
+        Id = 10,
+        Name = "Name 1 updated ...",
+        State = "State 1 updated ..."
+      };
+      // Act
+      var result = _parkRepository.UpdatePark(parkToUpdated);
+      // Assert
+      Assert.IsFalse(result);
+    }
+    [TestCase(1, true)]
+    [TestCase(10, false)]
+    public void Deletepark_ReturnsCorrectValue(int id, bool expectedResult)
+
+    {
+      // Arrange
+
+      // Act
+      var actualResult = _parkRepository.DeletePark(id);
+      // Assert
+      Assert.AreEqual(expectedResult, actualResult);
+    }
+
+
   }
 }
